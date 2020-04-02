@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>The index</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+    <script src="js/vue.js"></script>
+</head>
+<body>
+
+<div id="app">
+
+    <div class="container">
+        <input v-model="dateStart">
+        <input v-model="dateEnd">
+        <button type="submit" class="btn btn-primary" @click="refresh()">Refresh</button>
+    </div>
+
+    <div class="container" v-for="budget in budgets">
+        <h2 @click="budget.show = !budget.show" style="cursor: pointer">{{getGroupName(budget.groupId)}}</h2>
+        <div class="float-right"><p>{{prettyCurrency(budget.spent)}} of {{prettyCurrency(budget.budgeted)}}</p></div>
+        <div class="progress">
+            <div :class="`progress-bar ${getProgressColour(budget.spent, budget.budgeted)}`" role="progressbar"
+                 :aria-valuenow="getPercentage(budget.spent, budget.budgeted)"
+                 aria-valuemin="0"
+                 aria-valuemax="100"
+                 :style="`width:${getPercentage(budget.spent, budget.budgeted)}%`"></div>
+        </div>
+        <table class="table" v-if="budget.show">
+            <thead>
+            <tr>
+                <th>%</th>
+                <th>Category</th>
+                <th>Spent so far</th>
+                <th>Budgeted</th>
+                <th>Average</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr v-for="category in budget.categories" style="cursor: pointer" @click="showTransactions(category.categoryId)">
+                <td>
+                    <div class="progress">
+                        <div class="progress-bar" role="progressbar" :aria-valuenow="getPercentage(category.spent, category.budgeted)" aria-valuemin="0"
+                             aria-valuemax="100"
+                             :style="`width:${getPercentage(category.spent, category.budgeted)}%`">
+                            <span style="color: black">{{getPercentage(category.spent, category.budgeted)}}%</span>
+                        </div>
+                    </div>
+                </td>
+                <td>{{getCategoryName(category.categoryId)}}</td>
+                <td>{{prettyCurrency(category.spent)}}</td>
+                <td>{{prettyCurrency(category.budgeted)}}</td>
+                <td>{{category.avereage}}</td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="container">
+        <div class="modal fade" id="myModal" role="dialog">
+            <div class="modal-dialog">
+
+                <!-- Modal content-->
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                        <h4 class="modal-title">Transactions</h4>
+                    </div>
+                    <div class="modal-body">
+                        <table class="table">
+                            <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Type</th>
+                                <th>Description</th>
+                                <th>Reciever</th>
+                                <th>Amount</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr v-for="transaction in selectedTransactions">
+                                <td>{{transaction.date}}</td>
+                                <td>{{transaction.type}}</td>
+                                <td>{{transaction.description}}</td>
+                                <td>{{transaction.reciever}}</td>
+                                <td>{{prettyCurrency(Math.abs(transaction.amount))}}</td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+
+    <!--  Transactions  -->
+    <div class="container" v-if="transactions.length > 0">
+        <h2>Transactions</h2>
+        <p>The .table class adds basic styling (light padding and only horizontal dividers) to a table:</p>
+        <table class="table">
+            <thead>
+            <tr>
+                <th>Date</th>
+                <th>Type</th>
+                <th>Description</th>
+                <th>Reciever</th>
+                <th>Category</th>
+                <th>Amount</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr v-for="transaction in transactions">
+                <td>{{transaction.date}}</td>
+                <td>{{transaction.type}}</td>
+                <td>{{transaction.description}}</td>
+                <td>{{transaction.reciever}}</td>
+                <td>{{transaction.categoryId}}</td>
+                <td>{{prettyCurrency(Math.abs(transaction.amount))}}</td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<script src="index.js"></script>
+</body>
+</html>

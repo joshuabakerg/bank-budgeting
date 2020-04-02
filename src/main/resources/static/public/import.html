@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Test</title>
+    <script src="https://cdn.jsdelivr.net/npm/vue"></script>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+          integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+</head>
+<body>
+
+<div id="app">
+    <div class="container">
+        <h1>Import excel transactions</h1>
+        <a href="index.html">Home</a>
+
+        <div id="maps_request">
+            <form id="fileForm" method="POST" enctype="multipart/form-data">
+                <div class="container-fluid">
+                    <h3>Maps file import</h3>
+                    <div class="panel panel-default col-lg-12">
+                        <br>
+                        <div class="panel-body">
+                            <div>
+                                <div class="input-group">
+                                    <label class="input-group-btn">
+                                    <span class="btn btn-default">Browse&hellip;
+                                        <input id="file" type="file" name="file" accept=".xlsx" @change="fileChanged" style="display: none;"
+                                               multiple>
+				                    </span>
+                                    </label>
+                                    <input type="text" :value="selectedFileName" class="form-control" readonly>
+                                </div>
+                                <button id="btnUpload" class="btn btn-primary" type="button" @click="uploadFile">Upload</button>
+                                <i v-if="loading" class="fa fa-spinner fa-spin"></i>
+                            </div>
+                        </div>
+                        <br>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script src="import.js"></script>
+</body>
+</html>
