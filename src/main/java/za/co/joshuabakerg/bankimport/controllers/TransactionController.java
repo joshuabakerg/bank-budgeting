@@ -21,6 +21,7 @@ import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
@@ -38,6 +39,7 @@ import za.co.joshuabakerg.bankimport.domain.model.Category;
 import za.co.joshuabakerg.bankimport.domain.model.CategoryBudget;
 import za.co.joshuabakerg.bankimport.domain.model.Group;
 import za.co.joshuabakerg.bankimport.domain.model.GroupBudget;
+import za.co.joshuabakerg.bankimport.domain.model.Period;
 import za.co.joshuabakerg.bankimport.domain.model.Transaction;
 import za.co.joshuabakerg.bankimport.domain.repositories.CategoryRepository;
 import za.co.joshuabakerg.bankimport.domain.repositories.GroupRepository;
@@ -167,5 +169,36 @@ public class TransactionController {
                 .build());
     }
 
+    @GetMapping(path = "/periods")
+    public ResponseEntity<Collection<Period>> getPeriods() {
+        final ArrayList<Period> periods = new ArrayList<>();
+        final LocalDate start = LocalDate.now()
+                .minusMonths(1)
+                .withDayOfMonth(25);
+        final LocalDate end = LocalDate.now()
+                .withDayOfMonth(24);
+        periods.add(Period.builder()
+                .name(buildName(end))
+                .start(start)
+                .end(end)
+                .build());
+
+        for (int i = 1; i < 10; i++) {
+            final LocalDate newEnd = LocalDate.from(end).minusMonths(i);
+            periods.add(Period.builder()
+                    .name(buildName(newEnd))
+                    .start(LocalDate.from(start).minusMonths(i))
+                    .end(newEnd)
+                    .build());
+        }
+
+
+        return ResponseEntity.ok(periods);
+    }
+
+    private String buildName(final LocalDate newEnd) {
+
+        return String.format("%s %d", newEnd.getMonth().name(), newEnd.getYear());
+    }
 
 }

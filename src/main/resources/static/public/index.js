@@ -26,8 +26,8 @@ function fetchWithAuth(url) {
 const app = new Vue({
     el: '#app',
     data: {
-        dateStart: "2019-10-25",
-        dateEnd: "2019-11-24",
+        selectedPeriod: null,
+        periods: [],
         groups: [],
         categories: [],
         transactions: [],
@@ -41,10 +41,16 @@ const app = new Vue({
         },
         async getTransactions() {
             let url = new URL(window.location.origin + '/transactions');
-            url.search = new URLSearchParams({start: app.dateStart, end: app.dateEnd}).toString();
+            url.search = new URLSearchParams({start: app.selectedPeriod.start, end: app.selectedPeriod.end}).toString();
             let response = await fetchWithAuth(url);
             let transactions = await response.json();
             app.transactions = transactions;
+        },
+        async getPeriods() {
+            let response = await fetchWithAuth("/periods");
+            let periods = await response.json();
+            app.selectedPeriod = periods[0];
+            app.periods = periods;
         },
         async getGroups() {
             let response = await fetchWithAuth("/groups");
@@ -61,8 +67,8 @@ const app = new Vue({
             for (const group of app.groups) {
                 let url = new URL(window.location.origin + `/groups/${group.id}/budget`);
                 url.search = new URLSearchParams({
-                    start: app.dateStart,
-                    end: app.dateEnd,
+                    start: app.selectedPeriod.start,
+                    end: app.selectedPeriod.end,
                 }).toString();
                 let response = await fetchWithAuth(url);
                 let budget = await response.json();
@@ -102,11 +108,26 @@ const app = new Vue({
             console.log(categoryId);
             app.selectedTransactions = app.transactions.filter(trans => trans.categoryId == categoryId);
             $('#myModal').modal('show');
+        },
+        changePeriods(direction) {
+            let index = app.periods.indexOf(app.selectedPeriod);
+            let newIndex = index + direction;
+            if (newIndex < 0) {
+                app.selectedPeriod = app.periods[app.periods.length-1];
+            } else if (newIndex >= app.periods.length) {
+                app.selectedPeriod = app.periods[0];
+            }else{
+                app.selectedPeriod = app.periods[newIndex];
+            }
+            console.log(newIndex);
+            console.log(app.selectedPeriod );
+            app.refresh();
         }
     }
 });
 
 let main = async () => {
+    await app.getPeriods();
     await app.getGroups();
     await app.getCategories();
     await app.getTransactions();

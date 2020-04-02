@@ -77,8 +77,8 @@ public class TransactionRepository {
         final SearchSourceBuilder sourceBuilder = new SearchSourceBuilder();
         final BoolQueryBuilder queryBuilder = QueryBuilders.boolQuery()
                 .must(QueryBuilders.rangeQuery("date")
-                        .lt(end)
-                        .gt(start));
+                        .lte(end)
+                        .gte(start));
         if (CollectionUtils.isNotEmpty(categoryIds)) {
             queryBuilder.must(QueryBuilders.termsQuery("categoryId.keyword", categoryIds));
         }
