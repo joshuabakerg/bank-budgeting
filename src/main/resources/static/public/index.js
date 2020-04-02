@@ -40,7 +40,7 @@ const app = new Vue({
             await app.getBudgets();
         },
         async getTransactions() {
-            let url = new URL('http://' + window.location.host + '/transactions');
+            let url = new URL(window.location.origin + '/transactions');
             url.search = new URLSearchParams({start: app.dateStart, end: app.dateEnd}).toString();
             let response = await fetchWithAuth(url);
             let transactions = await response.json();
@@ -59,7 +59,7 @@ const app = new Vue({
         async getBudgets() {
             app.budgets = [];
             for (const group of app.groups) {
-                let url = new URL('http://' + window.location.host + `/groups/${group.id}/budget`);
+                let url = new URL(window.location.origin + `/groups/${group.id}/budget`);
                 url.search = new URLSearchParams({
                     start: app.dateStart,
                     end: app.dateEnd,
