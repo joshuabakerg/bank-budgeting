@@ -15,7 +15,9 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import lombok.AllArgsConstructor;
 import za.co.joshuabakerg.bankimport.controllers.model.JwtRequest;
 import za.co.joshuabakerg.bankimport.controllers.model.JwtResponse;
+import za.co.joshuabakerg.bankimport.core.UserService;
 import za.co.joshuabakerg.bankimport.core.impl.UserDetailsServiceImpl;
+import za.co.joshuabakerg.bankimport.domain.entities.User;
 import za.co.joshuabakerg.bankimport.utils.JwtTokenUtil;
 
 /**
@@ -31,13 +33,13 @@ public class JwtAuthenticationController {
     private final JwtTokenUtil jwtTokenUtil;
 
     private final UserDetailsServiceImpl userDetailsService;
+    private final UserService userService;
 
     @RequestMapping(value = "/api/authenticate", method = RequestMethod.POST)
     public ResponseEntity<?> createAuthenticationToken(@RequestBody JwtRequest authenticationRequest) throws Exception {
         authenticate(authenticationRequest.getUsername(), authenticationRequest.getPassword());
-        final UserDetails userDetails = userDetailsService
-                .loadUserByUsername(authenticationRequest.getUsername());
-        final String token = jwtTokenUtil.generateToken(userDetails);
+        final User user = userService.getByEmail(authenticationRequest.getUsername());
+        final String token = jwtTokenUtil.generateToken(user);
         return ResponseEntity.ok(new JwtResponse(token));
     }
 

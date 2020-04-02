@@ -109,7 +109,6 @@ public class TransactionController {
 
     @GetMapping(path = "/categories")
     public ResponseEntity<Collection<Category>> getCategories() {
-        final Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         final Collection<Category> categories = categoryRepository.findAll();
         return ResponseEntity.ok(categories);
     }

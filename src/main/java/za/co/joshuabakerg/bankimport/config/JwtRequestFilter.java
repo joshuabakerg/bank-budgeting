@@ -2,7 +2,6 @@ package za.co.joshuabakerg.bankimport.config;
 
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
@@ -17,7 +16,9 @@ import java.util.Optional;
 
 import lombok.AllArgsConstructor;
 import za.co.joshuabakerg.bankimport.core.impl.UserDetailsServiceImpl;
+import za.co.joshuabakerg.bankimport.domain.entities.User;
 import za.co.joshuabakerg.bankimport.utils.JwtTokenUtil;
+import za.co.joshuabakerg.bankimport.utils.SecurityUserBuilder;
 
 /**
  * @author Joshua Baker on 18/12/2019
@@ -38,10 +39,10 @@ public class JwtRequestFilter extends OncePerRequestFilter {
 
         oUsername.filter(s -> SecurityContextHolder.getContext().getAuthentication() == null)
                 .ifPresent(username -> {
-                    final UserDetails userDetails = userDetailsService.loadUserByUsername(username);
-                    if (jwtTokenUtil.validateToken(jwtToken.get(), userDetails)) {
+                    if (jwtTokenUtil.validateToken(jwtToken.get())) {
+                        final User userFromToken = jwtTokenUtil.getUserFromToken(jwtToken.get());
                         final UsernamePasswordAuthenticationToken authToken =
-                                new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+                                new UsernamePasswordAuthenticationToken(userFromToken, null, SecurityUserBuilder.build(userFromToken).getAuthorities());
                         authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                         SecurityContextHolder.getContext().setAuthentication(authToken);
                     }
