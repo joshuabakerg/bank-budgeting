@@ -35,6 +35,7 @@ import java.util.stream.Collectors;
 import lombok.AllArgsConstructor;
 import za.co.joshuabakerg.bankimport.core.method.ApplyCategory;
 import za.co.joshuabakerg.bankimport.core.method.GetExcelTransactions;
+import za.co.joshuabakerg.bankimport.domain.entities.User;
 import za.co.joshuabakerg.bankimport.domain.model.Category;
 import za.co.joshuabakerg.bankimport.domain.model.CategoryBudget;
 import za.co.joshuabakerg.bankimport.domain.model.Group;
@@ -105,7 +106,8 @@ public class TransactionController {
             categoryIds = Collections.singleton(categoryId);
         }
 
-        final Collection<Transaction> transactions = transactionRepository.findAllByPeriodAndCategoryIds(start, end, categoryIds);
+        final User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        final Collection<Transaction> transactions = transactionRepository.findAllByPeriodAndCategoryIds(start, end, categoryIds, user.getEmail());
         return ResponseEntity.ok(transactions);
     }
 
@@ -136,7 +138,9 @@ public class TransactionController {
                 .map(Category::getId)
                 .collect(Collectors.toList());
 
-        final Collection<Transaction> transactions = transactionRepository.findAllByPeriodAndCategoryIds(start, end, categoryIds);
+        final User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+        final Collection<Transaction> transactions = transactionRepository.findAllByPeriodAndCategoryIds(start, end, categoryIds, user.getEmail());
 
         final List<CategoryBudget> categoryBudgets = categories.stream()
                 .map(category -> {
@@ -178,16 +182,17 @@ public class TransactionController {
         final LocalDate end = LocalDate.now()
                 .withDayOfMonth(24);
         periods.add(Period.builder()
-                .name(buildName(end))
+                .name(buildName(start, end))
                 .start(start)
                 .end(end)
                 .build());
 
         for (int i = 1; i < 10; i++) {
             final LocalDate newEnd = LocalDate.from(end).minusMonths(i);
+            final LocalDate newStart = LocalDate.from(start).minusMonths(i);
             periods.add(Period.builder()
-                    .name(buildName(newEnd))
-                    .start(LocalDate.from(start).minusMonths(i))
+                    .name(buildName(newStart, newEnd))
+                    .start(newStart)
                     .end(newEnd)
                     .build());
         }
@@ -196,9 +201,10 @@ public class TransactionController {
         return ResponseEntity.ok(periods);
     }
 
-    private String buildName(final LocalDate newEnd) {
-
-        return String.format("%s %d", newEnd.getMonth().name(), newEnd.getYear());
+    private String buildName(final LocalDate start, final LocalDate end) {
+        final String startString = String.format("%d %s %d", start.getDayOfMonth(), start.getMonth().name(), start.getYear());
+        final String endString = String.format("%d %s %d", end.getDayOfMonth(), end.getMonth().name(), end.getYear());
+        return String.format("%s - %s", startString, endString);
     }
 
 }

@@ -65,20 +65,24 @@ public class TransactionRepository {
         return search(sourceBuilder);
     }
 
-    public Collection<Transaction> findAllByPeriod(final LocalDate start, final LocalDate end) {
+    public Collection<Transaction> findAllByPeriod(final LocalDate start, final LocalDate end, final String user) {
         final SearchSourceBuilder sourceBuilder = new SearchSourceBuilder();
-        sourceBuilder.query(QueryBuilders.rangeQuery("date")
-                .lt(end)
-                .gt(start));
+        sourceBuilder.query(QueryBuilders.boolQuery()
+                .must(QueryBuilders.rangeQuery("date")
+                        .lt(end)
+                        .gt(start))
+                .must(QueryBuilders.matchQuery("user.keyword", user)));
         return search(sourceBuilder);
     }
 
-    public Collection<Transaction> findAllByPeriodAndCategoryIds(final LocalDate start, final LocalDate end, final Collection<String> categoryIds) {
+    public Collection<Transaction> findAllByPeriodAndCategoryIds(final LocalDate start, final LocalDate end, final Collection<String> categoryIds,
+                                                                 final String user) {
         final SearchSourceBuilder sourceBuilder = new SearchSourceBuilder();
         final BoolQueryBuilder queryBuilder = QueryBuilders.boolQuery()
                 .must(QueryBuilders.rangeQuery("date")
                         .lte(end)
-                        .gte(start));
+                        .gte(start))
+                .must(QueryBuilders.matchQuery("user.keyword", user));
         if (CollectionUtils.isNotEmpty(categoryIds)) {
             queryBuilder.must(QueryBuilders.termsQuery("categoryId.keyword", categoryIds));
         }
