@@ -12,6 +12,9 @@ import org.elasticsearch.client.RequestOptions;
 import org.elasticsearch.client.RestHighLevelClient;
 import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
+import org.elasticsearch.index.reindex.BulkByScrollResponse;
+import org.elasticsearch.index.reindex.BulkByScrollTask;
+import org.elasticsearch.index.reindex.DeleteByQueryRequest;
 import org.elasticsearch.rest.RestStatus;
 import org.elasticsearch.search.SearchHit;
 import org.elasticsearch.search.builder.SearchSourceBuilder;
@@ -54,6 +57,18 @@ public class TransactionRepository {
             if (!RestStatus.OK.equals(status)) {
                 throw new RuntimeException("Failed to bulk upload tranasctions");
             }
+        } catch (IOException e) {
+            throw new UncheckedIOException(e);
+        }
+    }
+
+    public void deletePending(final String user) {
+        try {
+            final DeleteByQueryRequest deleteByQueryRequest = new DeleteByQueryRequest("transactions");
+            deleteByQueryRequest.setQuery(QueryBuilders.boolQuery()
+                    .must(QueryBuilders.matchQuery("type.keyword", "Pending"))
+                    .must(QueryBuilders.matchQuery("user.keyword", user)));
+            final BulkByScrollResponse response = client.deleteByQuery(deleteByQueryRequest, RequestOptions.DEFAULT);
         } catch (IOException e) {
             throw new UncheckedIOException(e);
         }

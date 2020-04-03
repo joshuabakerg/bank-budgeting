@@ -38,6 +38,8 @@ public class Transaction {
         return new HashCodeBuilder(17, 37)
                 .append(date)
                 .append(amount)
+                .append(account)
+                .append(user)
                 .toHashCode();
     }
 }

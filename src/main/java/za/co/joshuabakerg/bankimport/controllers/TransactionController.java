@@ -62,7 +62,7 @@ public class TransactionController {
     @PostMapping(path = "/transactions/import")
     public ResponseEntity<?> importCoverSheet(@NotNull @Valid MultipartHttpServletRequest request) {
         final Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        final UserDetails principal = (UserDetails) authentication.getPrincipal();
+        final User user = (User) authentication.getPrincipal();
 
         final Iterator<MultipartFile> files = request.getFileMap().values().iterator();
         final Set<Transaction> allTransactions = new HashSet<>();
@@ -75,11 +75,12 @@ public class TransactionController {
             transactions.forEach(applyCategory::execute);
             final String account = transactionFile.getOriginalFilename().split("_")[1];
             transactions.forEach(transaction -> {
-                transaction.setUser(principal.getUsername());
+                transaction.setUser(user.getId());
                 transaction.setAccount(account);
             });
             allTransactions.addAll(transactions);
         }
+        transactionRepository.deletePending(user.getId());
         transactionRepository.saveNew(allTransactions);
         return ResponseEntity.ok("good");
     }
@@ -107,7 +108,7 @@ public class TransactionController {
         }
 
         final User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        final Collection<Transaction> transactions = transactionRepository.findAllByPeriodAndCategoryIds(start, end, categoryIds, user.getEmail());
+        final Collection<Transaction> transactions = transactionRepository.findAllByPeriodAndCategoryIds(start, end, categoryIds, user.getId());
         return ResponseEntity.ok(transactions);
     }
 
@@ -140,7 +141,7 @@ public class TransactionController {
 
         final User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
-        final Collection<Transaction> transactions = transactionRepository.findAllByPeriodAndCategoryIds(start, end, categoryIds, user.getEmail());
+        final Collection<Transaction> transactions = transactionRepository.findAllByPeriodAndCategoryIds(start, end, categoryIds, user.getId());
 
         final List<CategoryBudget> categoryBudgets = categories.stream()
                 .map(category -> {

@@ -11,16 +11,15 @@ app:
       priority: 10
     - categoryId: TAKEOUT
       details: Eating Out & Takeouts
-      regex: ((?i)(kfc)|(WIMPY)|(Debonairs)|(Burger King)|(spur)|(mcd)|(Seattle)|(Romans Pizza)|(Mimmos)|(Ugly Delicious Food Co)|(Dakota Steak Ranch)|(Salsa))
-#      regex: ((?i)kfc)|((?i)WIMPY)|(Debonairs)|((?i)Burger King)|((?i)spur)|((?i)mcd)|((?i)Seattle)|((?i)Romans Pizza)|((?i)Mimmos)
+      regex: ((?i)(kfc)|(WIMPY)|(Debonairs)|(Burger King)|(spur)|(mcd)|(Seattle)|(Romans Pizza)|(Mimmos)|(Ugly Delicious Food Co)|(Dakota Steak Ranch)|(Salsa)|(Rocco Mama's))
       priority: 12
     - categoryId: HEALTH
       details: Healh & Medical
-      regex: ((?i)clicks)|((?i)dis(-|)chem)
+      regex: ((?i)(clicks)|(dis(-|)chem)|(sportsmans)|(Cricket))
       priority: 13
     - categoryId: ALCOHOL
       details: Alcohol
-      regex: ((?i).*liqour.*)|((?i).*bottle.*)
+      regex: ((?i)(.*liqour.*)|(.*bottle.*)|(tops))
       priority: 14
     - categoryId: GENERAL_PURCHASES
       details: General purchases
@@ -33,11 +32,11 @@ app:
     #Recurring
     - categoryId: ENTERTAINMENT
       details: Media
-      regex: ((?i)(Google)|(Steamgames.*)|(Netflix.*)|(Afrihost.*)|(Spotifyza)|(G2a.*)|(bowling))
+      regex: ((?i)(Google)|(Steamgames.*)|(Netflix.*)|(Spotifyza)|(G2a.*)|(bowling)|(origin.*)|(Epc\*epic)|(Molly Malones))
       priority: 20
     - categoryId: INTERNET_PHONE
       details: Internet and phone
-      regex: (cool Ideas)|(Vodacom)
+      regex: (cool Ideas)|(Vodacom)|(Afrihost.*)
       priority: 21
     - categoryId: RENT
       details: Monthly rent
@@ -45,7 +44,7 @@ app:
       priority: 22
     - categoryId: INSURNACE
       details: Insurance
-      regex: (Miwaycolle\d+)|(Discinsure\d+)
+      regex: (Miwaycolle\d+)|(Discinsure\d+)|(Ium Prem)
       priority: 23
     - categoryId: VEHICLE_INSTALLMENT
       details: Vehicle Repayments
@@ -58,7 +57,11 @@ app:
     - categoryId: BANK_FEES
       details: Bank Charges & Fees
       regex: (Monthly Account Fee)|(Vitality Money Premium)|(Real-time Payment Fee)
-      priority: 25
+      priority: 26
+    - categoryId: SAVINGS
+      details: Monthly savings
+      regex: (Save)
+      priority: 27
     #Income
     - categoryId: SALARY
       details: Monthly salary
@@ -93,7 +96,7 @@ app:
     - id: UNCATEGORISED
       groupId: DAY_TO_DAY
       name: Uncategorised
-      budgeted: 10000
+      budgeted: 2000
     - id: UNCATEGORISED_INCOME
       groupId: INCOME
       name: Uncategorised
@@ -109,7 +112,7 @@ app:
     - id: GENERAL_PURCHASES
       groupId: DAY_TO_DAY
       name: General purchases
-      budgeted: 1500
+      budgeted: 500
     - id: TRANSPORT
       groupId: DAY_TO_DAY
       name: Transport & Fuel
@@ -127,13 +130,13 @@ app:
       name: Alcohol
       budgeted: 200
     - id: INTERNET_PHONE
-      groupId: DAY_TO_DAY
+      groupId: RECURRING
       name: Internet & Phone
       budgeted: 2048
     - id: ENTERTAINMENT
       groupId: DAY_TO_DAY
       name: Entertainment
-      budgeted: 2048
+      budgeted: 1000
     - id: RENT
       groupId: RECURRING
       name: Rent
@@ -141,7 +144,7 @@ app:
     - id: INSURNACE
       groupId: RECURRING
       name: Insurance
-      budgeted: 1905
+      budgeted: 2038
     - id: VEHICLE_INSTALLMENT
       groupId: RECURRING
       name: Vehicle Installment
@@ -154,6 +157,10 @@ app:
       groupId: RECURRING
       name: Bank Fees
       budgeted: 200
+    - id: SAVINGS
+      groupId: RECURRING
+      name: Savings
+      budgeted: 2000
     - id: SALARY
       groupId: INCOME
       name: Salary
