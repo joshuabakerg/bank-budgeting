@@ -3,7 +3,7 @@ app:
     #Day to day
     - categoryId: GROCERIES
       details: Fruit lovers market, Checkers and Spar
-      regex: (Flm)|(Checkers)|(Spar)|(Pnp)|(Woolworths)|(Compass Group Sa)
+      regex: (Flm)|(Checkers)|(Spar)|(Pnp)|(Woolworths)|(Compass Group Sa)|(Groceries)
       priority: 0
     - categoryId: TRANSPORT
       details: Transport and Fuel
@@ -40,7 +40,7 @@ app:
       priority: 21
     - categoryId: RENT
       details: Monthly rent
-      regex: (?i)rent
+      regex: ((?i)(rent)|(To Fnb))
       priority: 22
     - categoryId: INSURNACE
       details: Insurance
@@ -96,7 +96,7 @@ app:
     - id: UNCATEGORISED
       groupId: DAY_TO_DAY
       name: Uncategorised
-      budgeted: 2000
+      budgeted: 500
     - id: UNCATEGORISED_INCOME
       groupId: INCOME
       name: Uncategorised
@@ -140,7 +140,7 @@ app:
     - id: RENT
       groupId: RECURRING
       name: Rent
-      budgeted: 2000
+      budgeted: 3000
     - id: INSURNACE
       groupId: RECURRING
       name: Insurance

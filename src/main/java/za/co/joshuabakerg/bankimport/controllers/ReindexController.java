@@ -27,6 +27,8 @@ import za.co.joshuabakerg.bankimport.core.method.ApplyCategory;
 import za.co.joshuabakerg.bankimport.domain.model.Category;
 import za.co.joshuabakerg.bankimport.domain.model.Group;
 import za.co.joshuabakerg.bankimport.domain.model.Transaction;
+import za.co.joshuabakerg.bankimport.domain.repositories.CategoryRepository;
+import za.co.joshuabakerg.bankimport.domain.repositories.GroupRepository;
 import za.co.joshuabakerg.bankimport.domain.repositories.TransactionRepository;
 
 /**
@@ -38,65 +40,32 @@ import za.co.joshuabakerg.bankimport.domain.repositories.TransactionRepository;
 @AllArgsConstructor
 public class ReindexController {
 
-    private final TransactionRepository transactionRepository;
+    private final TransactionRepository transactionRepositoryEs;
+    private final TransactionRepository transactionRepositoryMongo;
     private final ApplyCategory applyCategory;
     private final ApplicationProperties applicationProperties;
-    private final ObjectMapper objectMapper;
-    private final RestHighLevelClient client;
+    private final CategoryRepository categoryRepositoryMongo;
+    private final GroupRepository groupRepository;
 
     @PostMapping(path = "/transactions")
     public ResponseEntity reindexTransactions() {
-        final Collection<Transaction> transactions = transactionRepository.findAll();
+        final Collection<Transaction> transactions = transactionRepositoryEs.findAll();
         transactions.forEach(applyCategory::execute);
-        transactionRepository.saveNew(transactions);
+        transactionRepositoryMongo.saveAll(transactions);
         return ResponseEntity.ok().build();
     }
 
     @PostMapping(path = "/groups")
     public ResponseEntity reindexGroups() {
         final Collection<Group> groups = applicationProperties.getGroups();
-        try {
-            client.indices().delete(new DeleteIndexRequest("groups"), RequestOptions.DEFAULT);
-            client.indices().create(new CreateIndexRequest("groups"), RequestOptions.DEFAULT);
-            final BulkRequest request = new BulkRequest();
-            for (Group group : groups) {
-                request.add(new IndexRequest("groups")
-                        .id(group.getId())
-                        .type("_doc")
-                        .source(objectMapper.convertValue(group, LinkedHashMap.class)));
-            }
-            final BulkResponse response = client.bulk(request, RequestOptions.DEFAULT);
-            final RestStatus status = response.status();
-            if (!RestStatus.OK.equals(status)) {
-                throw new RuntimeException("Failed to bulk upload tranasctions");
-            }
-        } catch (IOException e) {
-            throw new UncheckedIOException(e);
-        }
+        groupRepository.saveAll(groups);
         return ResponseEntity.ok().build();
     }
 
     @PostMapping(path = "/categories")
     public ResponseEntity reindexCategories() {
         final Collection<Category> categories = applicationProperties.getCategories();
-        try {
-            client.indices().delete(new DeleteIndexRequest("categories"), RequestOptions.DEFAULT);
-            client.indices().create(new CreateIndexRequest("categories"), RequestOptions.DEFAULT);
-            final BulkRequest request = new BulkRequest();
-            for (Category category : categories) {
-                request.add(new IndexRequest("categories")
-                        .id(category.getId())
-                        .type("_doc")
-                        .source(objectMapper.convertValue(category, LinkedHashMap.class)));
-            }
-            final BulkResponse response = client.bulk(request, RequestOptions.DEFAULT);
-            final RestStatus status = response.status();
-            if (!RestStatus.OK.equals(status)) {
-                throw new RuntimeException("Failed to bulk upload tranasctions");
-            }
-        } catch (IOException e) {
-            throw new UncheckedIOException(e);
-        }
+        categoryRepositoryMongo.saveAll(categories);
         return ResponseEntity.ok().build();
     }
 
