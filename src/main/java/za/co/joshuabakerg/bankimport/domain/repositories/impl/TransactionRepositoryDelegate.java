@@ -1,6 +1,5 @@
 package za.co.joshuabakerg.bankimport.domain.repositories.impl;
 
-import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDate;
@@ -14,7 +13,6 @@ import za.co.joshuabakerg.bankimport.domain.repositories.TransactionRepository;
 /**
  * @author Joshua Baker on 08/04/2020
  */
-@Primary
 @Repository
 @AllArgsConstructor
 public class TransactionRepositoryDelegate implements TransactionRepository {

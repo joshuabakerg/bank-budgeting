@@ -1,10 +1,6 @@
 package za.co.joshuabakerg.bankimport.domain.repositories.impl;
 
-import com.mongodb.DBObject;
-import com.mongodb.QueryBuilder;
-
 import org.springframework.data.mongodb.core.MongoTemplate;
-import org.springframework.data.mongodb.core.query.BasicQuery;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Repository;

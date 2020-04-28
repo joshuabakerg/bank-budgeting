@@ -17,6 +17,7 @@ import org.elasticsearch.index.reindex.DeleteByQueryRequest;
 import org.elasticsearch.rest.RestStatus;
 import org.elasticsearch.search.SearchHit;
 import org.elasticsearch.search.builder.SearchSourceBuilder;
+import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
@@ -35,6 +36,7 @@ import za.co.joshuabakerg.bankimport.domain.repositories.TransactionRepository;
 /**
  * @author Joshua Baker on 05/03/2020
  */
+@Primary
 @Component
 @AllArgsConstructor
 @Slf4j

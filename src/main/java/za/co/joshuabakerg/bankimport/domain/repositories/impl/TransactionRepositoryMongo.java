@@ -24,10 +24,11 @@ import za.co.joshuabakerg.bankimport.utils.DocumentMapper;
 public class TransactionRepositoryMongo implements TransactionRepository {
 
     private final MongoTemplate mongoTemplate;
+    private final DocumentMapper documentMapper;
 
     @Override
     public void saveAll(final Collection<Transaction> newTransactions) {
-        final List<Document> docs = DocumentMapper.map(newTransactions);
+        final List<Document> docs = documentMapper.map(newTransactions);
         mongoTemplate.getCollection("transaction")
                 .insertMany(docs);
     }
