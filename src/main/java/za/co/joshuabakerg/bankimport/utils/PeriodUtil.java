@@ -16,18 +16,22 @@ public final class PeriodUtil {
 
     public static Collection<Period> generatePeriods(final int startDay, final int endDay, final int count) {
         final ArrayList<Period> periods = new ArrayList<>();
-        final LocalDate start = LocalDate.now()
+        LocalDate start = LocalDate.now()
                 .minusMonths(1)
                 .withDayOfMonth(startDay);
-        final LocalDate end = LocalDate.now()
+        LocalDate end = LocalDate.now()
                 .withDayOfMonth(endDay);
+        if (LocalDate.now().getDayOfMonth() >= endDay) {
+            start = start.plusMonths(1);
+            end = end.plusMonths(1);
+        }
         periods.add(Period.builder()
                 .name(buildName(start, end))
                 .start(start)
                 .end(end)
                 .build());
 
-        for (int i = 1; i < count ; i++) {
+        for (int i = 1; i < count; i++) {
             final LocalDate newEnd = LocalDate.from(end).minusMonths(i);
             final LocalDate newStart = LocalDate.from(start).minusMonths(i);
             periods.add(Period.builder()
